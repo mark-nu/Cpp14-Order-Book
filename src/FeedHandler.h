@@ -3,7 +3,7 @@
 class FeedHandler
 {
 public:
-    FeedHandler();
+    FeedHandler() = default;
 
     void processMessage(const std::string &line);
 };
