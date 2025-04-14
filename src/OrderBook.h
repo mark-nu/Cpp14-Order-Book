@@ -1,14 +1,23 @@
 #include <queue>
 #include <map>
-#include "OrderData.h"
-
-using namespace common;
+#include "Order.h"
 
 class OrderBook
 {
-public:
-    std::queue<OrderData> orderQueue;
+protected:
+    std::unordered_map<OrderId, Order> _orderMap;
 
-    std::map<Price, std::queue<OrderData>> sellOrdersByPrice;
-    std::map<Price, std::queue<OrderData>, std::greater<Price>> buyOrdersByPrice;
+public:
+    OrderBook() = default;
+    ~OrderBook() = default;
+
+    Order GetOrder(const OrderId &orderId);
+    void AddOrder(const Order &order);
+    void ModifyOrder(const OrderId &orderId);
+    void CancelOrder(const OrderId &orderId);
+
+    std::queue<Order> orderQueue;
+
+    std::map<Price, std::queue<Order>> sellOrdersByPrice;
+    std::map<Price, std::queue<Order>, std::greater<Price>> buyOrdersByPrice;
 };

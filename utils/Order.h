@@ -3,7 +3,7 @@
 #include "utils/Common.h"
 using namespace common;
 
-class OrderData
+class Order
 {
 public:
     enum class Action : char
@@ -21,10 +21,10 @@ public:
     };
 
 public:
-    OrderData() = default;
-    ~OrderData() = default;
-    OrderData(const OrderData &) = delete;
-    OrderData &operator=(const OrderData &) = delete;
+    Order() = default;
+    ~Order() = default;
+    Order(const Order &) = delete;
+    Order &operator=(const Order &) = delete;
 
     auto getAction() { return _action; }
     auto getOrderId() { return _orderId; }

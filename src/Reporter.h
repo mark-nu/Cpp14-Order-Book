@@ -2,7 +2,8 @@
 class Reporter
 {
 public:
-    Reporter();
+    Reporter() = default;
+    ~Reporter() = default;
 
     void printCurrentOrderBook(std::ostream &os) const;
     void printMidQuote(std::ostream &os) const;
