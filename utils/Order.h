@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include "utils/Common.h"
 using namespace common;
 
@@ -20,11 +21,12 @@ public:
         SELL = 'S',
     };
 
-public:
     Order() = default;
     ~Order() = default;
     Order(const Order &) = delete;
     Order &operator=(const Order &) = delete;
+
+    void parse(const char *line, size_t len);
 
     auto getAction() { return _action; }
     auto getOrderId() { return _orderId; }
