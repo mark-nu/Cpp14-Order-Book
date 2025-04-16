@@ -28,11 +28,11 @@ public:
 
     void parse(const char *line, size_t len);
 
-    auto getAction() { return _action; }
-    auto getOrderId() { return _orderId; }
-    auto getSide() { return _side; }
-    auto getPrice() { return _price; }
-    auto getQty() { return _qty; }
+    auto getAction() const { return _action; }
+    auto getOrderId() const { return _orderId; }
+    auto getSide() const { return _side; }
+    auto getPrice() const { return _price; }
+    auto getQty() const { return _qty; }
 
 private:
     char _action = 0;

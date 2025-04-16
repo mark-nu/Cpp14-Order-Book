@@ -1,10 +1,16 @@
+#pragma once
+
 #include <string>
+#include "OrderBook.h"
 
 class FeedHandler
 {
+private:
+    std::shared_ptr<OrderBook> _orderBook;
+
 public:
-    FeedHandler() = default;
+    FeedHandler() : _orderBook(new OrderBook) {}
     ~FeedHandler() = default;
 
-    void processMessage(const std::string &line);
+    void processMessage(const char *line, size_t lineLength);
 };

@@ -65,7 +65,7 @@ void Order::parse(const char *line, size_t len)
 
     auto parseOrderId = [&]() -> void
     {
-        if (_action = static_cast<char>(Action::TRADE))
+        if (_action == static_cast<char>(Action::TRADE))
         {
             return;
         }
@@ -91,7 +91,7 @@ void Order::parse(const char *line, size_t len)
         {
             _side = line[i];
 
-            if (_side != static_cast<char>(Side::BUY) || _side != static_cast<char>(Side::SELL))
+            if (_side != static_cast<char>(Side::BUY) && _side != static_cast<char>(Side::SELL))
             {
                 return false;
             }
@@ -138,4 +138,17 @@ void Order::parse(const char *line, size_t len)
             }
         }
     };
+
+    validLine();
+    parseAction();
+    findNextField();
+    parseOrderId();
+    findNextField();
+    parseSide();
+    findNextField();
+    parseQuantity();
+    findNextField();
+    parsePrice();
+
+    return;
 }
