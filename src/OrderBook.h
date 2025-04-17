@@ -24,8 +24,8 @@ public:
     OrderBook() = default;
     ~OrderBook() = default;
 
-    std::shared_ptr<Order> GetOrder(const OrderId &orderId);
-    void AddOrder(std::shared_ptr<Order> order);
-    void ModifyOrder(const OrderId &orderId);
-    void CancelOrder(const OrderId &orderId);
+    std::shared_ptr<Order> getOrder(const OrderId &orderId);
+    void addOrder(std::shared_ptr<Order> order);
+    void modifyOrder(const OrderId &orderId);
+    void cancelOrder(const OrderId &orderId);
 };

@@ -1,7 +1,7 @@
 #include "OrderBook.h"
 #include <iostream>
 
-std::shared_ptr<Order> OrderBook::GetOrder(const OrderId &orderId)
+std::shared_ptr<Order> OrderBook::getOrder(const OrderId &orderId)
 {
     if (_orderMap.find(orderId) != _orderMap.end())
     {
@@ -12,7 +12,7 @@ std::shared_ptr<Order> OrderBook::GetOrder(const OrderId &orderId)
     return nullptr;
 }
 
-void OrderBook::AddOrder(std::shared_ptr<Order> order)
+void OrderBook::addOrder(std::shared_ptr<Order> order)
 {
     auto it = _orderMap.emplace(order->getOrderId(), order);
     if (!it.second)
@@ -32,11 +32,11 @@ void OrderBook::AddOrder(std::shared_ptr<Order> order)
     }
 }
 
-void OrderBook::ModifyOrder(const OrderId &orderId)
+void OrderBook::modifyOrder(const OrderId &orderId)
 {
 }
 
-void OrderBook::CancelOrder(const OrderId &orderId)
+void OrderBook::cancelOrder(const OrderId &orderId)
 {
     _orderMap.erase(orderId);
 }
