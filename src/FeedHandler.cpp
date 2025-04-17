@@ -1,17 +1,16 @@
 #include "FeedHandler.h"
-#include "Order.h"
+#include "../utils/Order.h"
 #include <iostream>
 
 void FeedHandler::processMessage(const char *line, size_t lineLength)
 {
-    Order o;
+    auto order = std::make_shared<Order>();
+    order->parse(line, lineLength);
 
-    o.parse(line, lineLength);
-
-    switch (o.getAction())
+    switch (order->getAction())
     {
     case static_cast<char>(Order::Action::ADD):
-        _orderBook->AddOrder(o.getOrderId(), o);
+        _orderBook->AddOrder(order);
         break;
     case static_cast<char>(Order::Action::CANCEL):
         std::cout << "CANCEL" << std::endl;

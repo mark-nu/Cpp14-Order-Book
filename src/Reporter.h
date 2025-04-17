@@ -9,7 +9,8 @@ private:
     std::shared_ptr<OrderBook> _orderBook;
 
 public:
-    Reporter() : _orderBook(new OrderBook) {}
+    explicit Reporter(std::shared_ptr<OrderBook> book)
+        : _orderBook(std::move(book)) {}
     ~Reporter() = default;
 
     void printCurrentOrderBook(std::ostream &os) const;
