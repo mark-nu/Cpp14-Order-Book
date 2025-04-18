@@ -33,6 +33,8 @@ public:
     auto getSide() const { return _side; }
     auto getPrice() const { return _price; }
     auto getQty() const { return _qty; }
+    auto setPrice(const Price &price) { _price = price; }
+    auto setQty(const Quantity &qty) { _qty = qty; }
 
 private:
     char _action = 0;

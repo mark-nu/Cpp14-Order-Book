@@ -10,19 +10,16 @@ void FeedHandler::processMessage(const char *line, size_t lineLength)
     switch (order->getAction())
     {
     case static_cast<char>(Order::Action::ADD):
-        std::cout << "ADD" << std::endl;
         _orderBook->addOrder(order);
         break;
     case static_cast<char>(Order::Action::CANCEL):
         _orderBook->cancelOrder(order->getOrderId());
-        std::cout << "CANCEL" << std::endl;
         break;
     case static_cast<char>(Order::Action::MODIFY):
-        _orderBook->modifyOrder(order->getOrderId());
-        std::cout << "MODIFY" << std::endl;
+        _orderBook->modifyOrder(order);
         break;
     case static_cast<char>(Order::Action::TRADE):
-        std::cout << "TRADE" << std::endl;
+        _orderBook->trade(order->getQty(), order->getPrice());
         break;
     }
 }
