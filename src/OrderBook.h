@@ -34,15 +34,54 @@ private:
     Quantity _lastTradedQty{0};
     Price _lastTradePrice{0.0};
 
+    template <typename MapType>
+    void insertIntoBucket(MapType &book, const OrderPtr &order)
+    {
+        auto it = book.find(order->getPrice());
+        if (it == book.end())
+        {
+            it = book.emplace(order->getPrice(), PriceBucket{}).first;
+        }
+        it->second.push_back(order);
+        _priceIters[order->getOrderId()] = std::prev(it->second.end());
+    }
+
+    template <typename MapType>
+    void removeFromBucket(MapType &book, const OrderPtr &order)
+    {
+        auto id = order->getOrderId();
+        auto pitIt = _priceIters.find(id);
+        if (pitIt == _priceIters.end())
+            return;
+
+        // grab the list‐node iterator
+        auto listIt = pitIt->second;
+        Price p = order->getPrice();
+
+        // erase from the bucket
+        auto mapIt = book.find(p);
+        if (mapIt != book.end())
+        {
+            auto &bucket = mapIt->second;
+            bucket.erase(listIt);
+            if (bucket.empty()) // prune empty price‐level
+            {
+                book.erase(mapIt);
+            }
+        }
+
+        _priceIters.erase(pitIt);
+    }
+
 public:
     OrderBook() = default;
     ~OrderBook() = default;
     OrderBook(const OrderBook &) = delete;
     OrderBook &operator=(const OrderBook &) = delete;
 
-    std::shared_ptr<Order> getOrder(const OrderId &orderId);
-    void addOrder(std::shared_ptr<Order> order);
-    void modifyOrder(std::shared_ptr<Order> order);
-    void cancelOrder(const OrderId &orderId);
+    OrderPtr getOrder(const OrderId &orderId);
+    void addOrder(const OrderPtr &order);
+    void modifyOrder(const OrderPtr &order);
+    void cancelOrder(const OrderPtr &order);
     void trade(const Quantity &qty, const Price &price);
 };

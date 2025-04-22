@@ -4,7 +4,11 @@
 
 void Order::parse(const char *line, size_t len)
 {
+    _orderId = 0;
+    _qty = 0;
+    _price = 0;
     auto i = 0;
+    bool isTrade = false;
 
     auto validLine = [&]() -> bool
     {
@@ -48,8 +52,26 @@ void Order::parse(const char *line, size_t len)
     {
         for (; i < len; ++i)
         {
-            _action = line[i];
-            if (_action != static_cast<char>(Action::ADD) && _action != static_cast<char>(Action::CANCEL) && _action != static_cast<char>(Action::MODIFY) && _action != static_cast<char>(Action::TRADE))
+            switch (line[i])
+            {
+            case 'A':
+                _action = Action::ADD;
+                break;
+            case 'X':
+                _action = Action::CANCEL;
+                break;
+            case 'M':
+                _action = Action::MODIFY;
+                break;
+            case 'T':
+                _action = Action::TRADE;
+                isTrade = true;
+                break;
+            default: /* error handling */
+                break;
+            }
+
+            if (_action != Action::ADD && _action != Action::CANCEL && _action != Action::MODIFY && _action != Action::TRADE)
             {
                 return false;
             }
@@ -65,7 +87,7 @@ void Order::parse(const char *line, size_t len)
 
     auto parseOrderId = [&]() -> void
     {
-        if (_action == static_cast<char>(Action::TRADE))
+        if (_action == Action::TRADE)
         {
             return;
         }
@@ -89,9 +111,19 @@ void Order::parse(const char *line, size_t len)
     {
         for (; i < len; ++i)
         {
-            _side = line[i];
+            switch (line[i])
+            {
+            case 'B':
+                _side = Side::BUY;
+                break;
+            case 'S':
+                _side = Side::SELL;
+                break;
+            default: /* error handling */
+                break;
+            }
 
-            if (_side != static_cast<char>(Side::BUY) && _side != static_cast<char>(Side::SELL))
+            if (_side != Side::BUY && _side != Side::SELL)
             {
                 return false;
             }
@@ -139,16 +171,29 @@ void Order::parse(const char *line, size_t len)
         }
     };
 
-    validLine();
+    if (!validLine())
+    {
+        return;
+    }
     parseAction();
     findNextField();
-    parseOrderId();
-    findNextField();
-    parseSide();
-    findNextField();
-    parseQuantity();
-    findNextField();
-    parsePrice();
+
+    if (isTrade)
+    {
+        parseQuantity();
+        findNextField();
+        parsePrice();
+    }
+    else
+    {
+        parseOrderId();
+        findNextField();
+        parseSide();
+        findNextField();
+        parseQuantity();
+        findNextField();
+        parsePrice();
+    }
 
     return;
 }

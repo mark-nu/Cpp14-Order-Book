@@ -11,7 +11,7 @@ OrderPtr OrderBook::getOrder(const OrderId &orderId)
     return *(ait->second);
 }
 
-void OrderBook::addOrder(OrderPtr order)
+void OrderBook::addOrder(const OrderPtr &order)
 {
     OrderId id = order->getOrderId();
     if (_arrivalIters.count(id))
@@ -21,67 +21,84 @@ void OrderBook::addOrder(OrderPtr order)
     }
 
     // insert into global FIFO list
-    auto lit = _orderList.insert(_orderList.end(), order);
-    _arrivalIters[id] = lit;
+    _arrivalIters[id] = _orderList.insert(_orderList.end(), order);
 
     // insert into corresponding price bucket
-    auto &bucket = order->getSide() == static_cast<char>(Order::Side::BUY)
-                       ? _buyOrdersByPrice[order->getPrice()]
-                       : _sellOrdersByPrice[order->getPrice()];
-    auto pit = bucket.insert(bucket.end(), order);
-    _priceIters[id] = pit;
+    if (order->getSide() == Order::Side::BUY)
+    {
+        insertIntoBucket(_buyOrdersByPrice, order);
+    }
+    else
+    {
+        insertIntoBucket(_sellOrdersByPrice, order);
+    }
 }
 
-void OrderBook::modifyOrder(OrderPtr order)
+void OrderBook::modifyOrder(const OrderPtr &incoming)
 {
-    OrderId id = order->getOrderId();
-    auto ait_it = _arrivalIters.find(id);
-    if (ait_it == _arrivalIters.end())
+    OrderId id = incoming->getOrderId();
+    auto existing = getOrder(id);
+    if (!existing)
     {
-        std::cout << "Could not find order to modify: " << id << std::endl;
         return;
     }
-    // existing pointer
-    auto existing = *(ait_it->second);
-    // update quantity
-    existing->setQty(order->getQty());
-    // price change?
-    if (existing->getPrice() != order->getPrice())
+
+    // update the quantity in‐place
+    existing->setQty(incoming->getQty());
+
+    // if price has changed, move it between buckets
+    if (existing->getPrice() != incoming->getPrice())
     {
-        Price old = existing->getPrice();
-        // remove from old bucket
-        auto pit_it = _priceIters[id];
-        existing->getSide() == static_cast<char>(Order::Side::BUY)
-            ? _buyOrdersByPrice[old].erase(pit_it)
-            : _sellOrdersByPrice[old].erase(pit_it);
-        // update price
-        existing->setPrice(order->getPrice());
-        // reinsert
-        auto &newBucket = existing->getSide() == static_cast<char>(Order::Side::BUY)
-                              ? _buyOrdersByPrice[existing->getPrice()]
-                              : _sellOrdersByPrice[existing->getPrice()];
-        auto newPit = newBucket.insert(newBucket.end(), existing);
-        _priceIters[id] = newPit;
+        // 1) remove from old bucket
+        if (existing->getSide() == Order::Side::BUY)
+        {
+            removeFromBucket(_buyOrdersByPrice, existing);
+        }
+        else
+        {
+            removeFromBucket(_sellOrdersByPrice, existing);
+        }
+
+        // 2) update price on the order
+        existing->setPrice(incoming->getPrice());
+
+        // 3) insert into the new bucket
+        if (existing->getSide() == Order::Side::BUY)
+        {
+            insertIntoBucket(_buyOrdersByPrice, existing);
+        }
+        else
+        {
+            insertIntoBucket(_sellOrdersByPrice, existing);
+        }
     }
 }
 
-void OrderBook::cancelOrder(const OrderId &orderId)
+void OrderBook::cancelOrder(const OrderPtr &order)
 {
-    // remove from FIFO
-    if (_arrivalIters.count(orderId))
+    auto id = order->getOrderId();
+
+    auto existing = getOrder(id);
+    if (!existing)
     {
-        _orderList.erase(_arrivalIters[orderId]);
-        _arrivalIters.erase(orderId);
+        return;
     }
-    // remove from price bucket
-    if (_priceIters.count(orderId))
+
+    auto ait = _arrivalIters.find(id);
+    if (ait != _arrivalIters.end())
     {
-        auto ptr = *(_priceIters[orderId]);
-        Price p = ptr->getPrice();
-        ptr->getSide() == static_cast<char>(Order::Side::BUY)
-            ? _buyOrdersByPrice[p].erase(_priceIters[orderId])
-            : _sellOrdersByPrice[p].erase(_priceIters[orderId]);
-        _priceIters.erase(orderId);
+        _orderList.erase(ait->second);
+        _arrivalIters.erase(ait);
+    }
+
+    // 3) remove from the correct bucket using the stored order
+    if (existing->getSide() == Order::Side::BUY)
+    {
+        removeFromBucket(_buyOrdersByPrice, existing);
+    }
+    else
+    {
+        removeFromBucket(_sellOrdersByPrice, existing);
     }
 }
 

@@ -37,9 +37,9 @@ public:
     auto setQty(const Quantity &qty) { _qty = qty; }
 
 private:
-    char _action = 0;
+    Action _action;
     OrderId _orderId = 0;
-    char _side = 0;
+    Side _side;
     Price _price = 0.0;
     Quantity _qty = 0;
 };

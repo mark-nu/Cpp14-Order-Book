@@ -30,11 +30,11 @@ void Matcher::findMatch()
 
         if (buyOrder->getQty() == 0)
         {
-            _orderBook->cancelOrder(buyOrder->getOrderId());
+            _orderBook->cancelOrder(buyOrder);
         }
         if (sellOrder->getQty() == 0)
         {
-            _orderBook->cancelOrder(sellOrder->getOrderId());
+            _orderBook->cancelOrder(sellOrder);
         }
     }
 }
