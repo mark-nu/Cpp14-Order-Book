@@ -5,12 +5,15 @@
 class Matcher
 {
 private:
-    std::unique_ptr<OrderBook> _orderBook;
+    std::shared_ptr<OrderBook> _orderBook;
 
 public:
-    Matcher() = default;
+    explicit Matcher(std::shared_ptr<OrderBook> book)
+        : _orderBook(std::move(book)) {}
     ~Matcher() = default;
+    Matcher(const Matcher &) = delete;
+    Matcher &operator=(const Matcher &) = delete;
 
-    void findMatch(const Price &price, const Quantity &quantity);
+    void findMatch();
     void removeExecutedOrder(const OrderId &orderId);
 };

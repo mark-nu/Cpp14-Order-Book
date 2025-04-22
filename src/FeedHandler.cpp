@@ -11,6 +11,7 @@ void FeedHandler::processMessage(const char *line, size_t lineLength)
     {
     case static_cast<char>(Order::Action::ADD):
         _orderBook->addOrder(order);
+        _matcher->findMatch();
         break;
     case static_cast<char>(Order::Action::CANCEL):
         _orderBook->cancelOrder(order->getOrderId());

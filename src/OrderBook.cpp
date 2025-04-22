@@ -1,6 +1,6 @@
 #include "OrderBook.h"
 
-std::shared_ptr<Order> OrderBook::getOrder(const OrderId &orderId)
+OrderPtr OrderBook::getOrder(const OrderId &orderId)
 {
     auto ait = _arrivalIters.find(orderId);
     if (ait == _arrivalIters.end())
@@ -11,7 +11,7 @@ std::shared_ptr<Order> OrderBook::getOrder(const OrderId &orderId)
     return *(ait->second);
 }
 
-void OrderBook::addOrder(std::shared_ptr<Order> order)
+void OrderBook::addOrder(OrderPtr order)
 {
     OrderId id = order->getOrderId();
     if (_arrivalIters.count(id))
@@ -19,11 +19,12 @@ void OrderBook::addOrder(std::shared_ptr<Order> order)
         std::cout << "Duplicate order " << id << std::endl;
         return;
     }
-    // 1) insert into global FIFO list
+
+    // insert into global FIFO list
     auto lit = _orderList.insert(_orderList.end(), order);
     _arrivalIters[id] = lit;
 
-    // 2) insert into corresponding price bucket
+    // insert into corresponding price bucket
     auto &bucket = order->getSide() == static_cast<char>(Order::Side::BUY)
                        ? _buyOrdersByPrice[order->getPrice()]
                        : _sellOrdersByPrice[order->getPrice()];
@@ -31,7 +32,7 @@ void OrderBook::addOrder(std::shared_ptr<Order> order)
     _priceIters[id] = pit;
 }
 
-void OrderBook::modifyOrder(std::shared_ptr<Order> order)
+void OrderBook::modifyOrder(OrderPtr order)
 {
     OrderId id = order->getOrderId();
     auto ait_it = _arrivalIters.find(id);

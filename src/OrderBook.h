@@ -20,6 +20,7 @@ using PriceListIterMap = std::unordered_map<OrderId, PriceBucket::iterator>;
 class OrderBook
 {
     friend class Reporter;
+    friend class Matcher;
 
 private:
     OrderList _orderList;                 // FIFO of all orders
@@ -36,6 +37,8 @@ private:
 public:
     OrderBook() = default;
     ~OrderBook() = default;
+    OrderBook(const OrderBook &) = delete;
+    OrderBook &operator=(const OrderBook &) = delete;
 
     std::shared_ptr<Order> getOrder(const OrderId &orderId);
     void addOrder(std::shared_ptr<Order> order);
