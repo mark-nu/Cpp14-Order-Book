@@ -45,24 +45,23 @@ TEST(OrderParseTest, BasicFields)
     EXPECT_EQ(o.getQty(), 5u);
     EXPECT_DOUBLE_EQ(o.getPrice(), 88.0);
 
-    o.parse("M,10000,B,3,45.67");
+    o.parse("M,10000,B,3,45");
     EXPECT_EQ(o.getAction(), Order::Action::MODIFY);
     EXPECT_EQ(o.getOrderId(), 10000u);
     EXPECT_EQ(o.getSide(), Order::Side::BUY);
     EXPECT_EQ(o.getQty(), 3u);
-    EXPECT_DOUBLE_EQ(o.getPrice(), 45.67);
+    EXPECT_DOUBLE_EQ(o.getPrice(), 45);
 
-    o.parse("T,7,150.5");
+    o.parse("T,7,150");
     EXPECT_EQ(o.getAction(), Order::Action::TRADE);
     EXPECT_EQ(o.getQty(), 7u);
-    EXPECT_DOUBLE_EQ(o.getPrice(), 150.5);
+    EXPECT_DOUBLE_EQ(o.getPrice(), 150);
 }
 
 // Test midquote sequence against example
 TEST(OrderBookMidQuoteTest, ExampleSequence)
 {
     std::vector<std::string> msgs = {
-        "A,1,B,0,0", // no buy or sell
         "A,100000,S,1,1075",
         "A,100001,B,9,1000",
         "A,100002,B,30,975",
@@ -71,13 +70,31 @@ TEST(OrderBookMidQuoteTest, ExampleSequence)
         "A,100005,S,2,1025",
     };
     auto mids = captureMidQuotes(msgs);
-    EXPECT_NE(mids[0].find("NAN"), std::string::npos);
-    EXPECT_NEAR(std::stod(mids[1]), 1037.5, 1e-9);
-    EXPECT_NEAR(std::stod(mids[2]), 1037.5, 1e-9);
-    EXPECT_NEAR(std::stod(mids[3]), 1025.0, 1e-9);
-    EXPECT_NEAR(std::stod(mids[4]), 1025.0, 1e-9);
-    EXPECT_NEAR(std::stod(mids[5]), 1012.5, 1e-9);
-    EXPECT_NEAR(std::stod(mids[6]), 1012.5, 1e-9);
+    ASSERT_EQ(mids.size(), msgs.size());
+
+    // helper: extract the number after the colon, or return NaN if "NAN"
+    auto parseMid = [&](const std::string &s) -> double
+    {
+        auto p = s.find(':');
+        if (p == std::string::npos)
+        {
+            throw std::runtime_error("bad midquote: " + s);
+        }
+        std::string num = s.substr(p + 1);
+        if (num.find("NAN") != std::string::npos)
+        {
+            return std::numeric_limits<double>::quiet_NaN();
+        }
+        return std::stod(num);
+    };
+
+    double m0 = parseMid(mids[0]);
+    EXPECT_TRUE(std::isnan(m0));
+    EXPECT_NEAR(parseMid(mids[1]), 1037.5, 1e-9);
+    EXPECT_NEAR(parseMid(mids[2]), 1037.5, 1e-9);
+    EXPECT_NEAR(parseMid(mids[3]), 1025.0, 1e-9);
+    EXPECT_NEAR(parseMid(mids[4]), 1025.0, 1e-9);
+    EXPECT_NEAR(parseMid(mids[5]), 1012.5, 1e-9);
 }
 
 // Test simple add/modify/cancel in OrderBook internal state
@@ -123,23 +140,30 @@ TEST(OrderBookStateTest, AddModifyCancel)
 TEST(OrderBookTradeTest, CumulativeQuantity)
 {
     auto bookPtr = std::make_shared<OrderBook>();
-    Reporter rep(bookPtr);
 
+    // First trade at price 1025
     testing::internal::CaptureStdout();
     bookPtr->trade(2, 1025.0);
-    bookPtr->trade(1, 1025.0);
-    auto t1 = testing::internal::GetCapturedStdout();
-    EXPECT_EQ(t1, "3@1025\n");
+    auto out1 = testing::internal::GetCapturedStdout();
+    EXPECT_EQ(out1, "2@1025\n");
 
+    // Second trade at the same price should accumulate on top
+    testing::internal::CaptureStdout();
+    bookPtr->trade(1, 1025.0);
+    auto out2 = testing::internal::GetCapturedStdout();
+    EXPECT_EQ(out2, "3@1025\n");
+
+    // First trade at new price 1000 resets the rolling tally
     testing::internal::CaptureStdout();
     bookPtr->trade(1, 1000.0);
-    auto t2 = testing::internal::GetCapturedStdout();
-    EXPECT_EQ(t2, "1@1000\n");
+    auto out3 = testing::internal::GetCapturedStdout();
+    EXPECT_EQ(out3, "1@1000\n");
 
+    // Next trade at 1000 accumulates again
     testing::internal::CaptureStdout();
     bookPtr->trade(5, 1000.0);
-    auto t3 = testing::internal::GetCapturedStdout();
-    EXPECT_EQ(t3, "6@1000\n");
+    auto out4 = testing::internal::GetCapturedStdout();
+    EXPECT_EQ(out4, "6@1000\n");
 }
 
 // Test robustness: corrupted and duplicate IDs

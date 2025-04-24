@@ -3,6 +3,12 @@
 
 void Order::parse(const char *line, const size_t &len)
 {
+    _side = Side::BUY; // Default side
+    _orderId = 0;
+    _qty = 0;
+    _price = 0.0;
+    _action = Action::ADD; // Default action
+
     const char *p = line;
     const char *end = line + len;
 
