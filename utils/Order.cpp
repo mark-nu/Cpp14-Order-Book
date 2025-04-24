@@ -1,7 +1,7 @@
 #include "Order.h"
 #include <cctype> // for std::isspace, std::isdigit
 
-void Order::parse(const char *line, size_t len)
+void Order::parse(const char *line, const size_t &len)
 {
     const char *p = line;
     const char *end = line + len;

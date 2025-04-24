@@ -26,7 +26,11 @@ public:
     Order(const Order &) = delete;
     Order &operator=(const Order &) = delete;
 
-    void parse(const char *line, size_t len);
+    void parse(const char *line, const size_t &len);
+    void parse(const char *line)
+    {
+        parse(line, std::strlen(line));
+    }
 
     auto getAction() const { return _action; }
     auto getOrderId() const { return _orderId; }
