@@ -167,9 +167,3 @@ TEST(OrderBookErrorTest, CorruptedAndDuplicate)
     good->parse("A,3,S,2,20");
     EXPECT_NO_THROW(bookPtr->addOrder(good));
 }
-
-int main(int argc, char **argv)
-{
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-}
