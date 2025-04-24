@@ -1,199 +1,81 @@
 #include "Order.h"
-#include <sstream>
-#include <iostream>
+#include <cctype> // for std::isspace, std::isdigit
 
 void Order::parse(const char *line, size_t len)
 {
-    _orderId = 0;
-    _qty = 0;
-    _price = 0;
-    auto i = 0;
-    bool isTrade = false;
+    const char *p = line;
+    const char *end = line + len;
 
-    auto validLine = [&]() -> bool
+    // Skip leading whitespace
+    while (p < end && std::isspace(*p))
     {
-        for (; i < len; ++i)
-        {
-            if (line[i] == ' ')
-            {
-                continue;
-            }
+        ++p;
+    }
 
-            if (line[i] == '/' && line[i + 1] == '/')
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
-        }
-
-        return false;
-    };
-
-    auto findNextField = [&]() -> void
-    {
-        for (; i < len; ++i)
-        {
-            if (line[i] == ',')
-            {
-                ++i;
-                return;
-            }
-            else if (line[i] == ' ')
-            {
-                continue;
-            }
-        }
-    };
-
-    auto parseAction = [&]() -> bool
-    {
-        for (; i < len; ++i)
-        {
-            switch (line[i])
-            {
-            case 'A':
-                _action = Action::ADD;
-                break;
-            case 'X':
-                _action = Action::CANCEL;
-                break;
-            case 'M':
-                _action = Action::MODIFY;
-                break;
-            case 'T':
-                _action = Action::TRADE;
-                isTrade = true;
-                break;
-            default: /* error handling */
-                break;
-            }
-
-            if (_action != Action::ADD && _action != Action::CANCEL && _action != Action::MODIFY && _action != Action::TRADE)
-            {
-                return false;
-            }
-            else
-            {
-                ++i;
-                return true;
-            }
-        }
-
-        return false;
-    };
-
-    auto parseOrderId = [&]() -> void
-    {
-        if (_action == Action::TRADE)
-        {
-            return;
-        }
-
-        for (; i < len; ++i)
-        {
-            if (std::isdigit(line[i]))
-            {
-                _orderId *= 10;
-                _orderId += line[i] - '0';
-            }
-            else
-            {
-                ++i;
-                return;
-            }
-        }
-    };
-
-    auto parseSide = [&]() -> bool
-    {
-        for (; i < len; ++i)
-        {
-            switch (line[i])
-            {
-            case 'B':
-                _side = Side::BUY;
-                break;
-            case 'S':
-                _side = Side::SELL;
-                break;
-            default: /* error handling */
-                break;
-            }
-
-            if (_side != Side::BUY && _side != Side::SELL)
-            {
-                return false;
-            }
-            else
-            {
-                ++i;
-                return true;
-            }
-        }
-
-        return false;
-    };
-
-    auto parseQuantity = [&]() -> void
-    {
-        for (; i < len; ++i)
-        {
-            if (std::isdigit(line[i]))
-            {
-                _qty *= 10;
-                _qty += line[i] - '0';
-            }
-            else
-            {
-                ++i;
-                return;
-            }
-        }
-    };
-
-    auto parsePrice = [&]() -> void
-    {
-        for (; i < len; ++i)
-        {
-            if (std::isdigit(line[i]))
-            {
-                _price *= 10;
-                _price += line[i] - '0';
-            }
-            else
-            {
-                ++i;
-                return;
-            }
-        }
-    };
-
-    if (!validLine())
+    // Skip comment lines (“//…”)
+    if (p + 1 < end && p[0] == '/' && p[1] == '/')
     {
         return;
     }
-    parseAction();
-    findNextField();
 
-    if (isTrade)
+    // Parse action (A,X,M,T)
+    _action = static_cast<Action>(*p++);
+
+    // Skip one comma (or any whitespace+comma)
+    auto skipComma = [&]()
     {
-        parseQuantity();
-        findNextField();
-        parsePrice();
+        while (p < end && (std::isspace(*p) || *p == ','))
+            ++p;
+    };
+    skipComma();
+
+    if (_action == Action::TRADE)
+    {
+        // Format: T,<qty>,<price>
+        // qty
+        while (p < end && std::isdigit(*p))
+        {
+            _qty = _qty * 10 + (*p - '0');
+            ++p;
+        }
+        skipComma();
+
+        // price
+        while (p < end && std::isdigit(*p))
+        {
+            _price = _price * 10 + (*p - '0');
+            ++p;
+        }
     }
     else
     {
-        parseOrderId();
-        findNextField();
-        parseSide();
-        findNextField();
-        parseQuantity();
-        findNextField();
-        parsePrice();
-    }
+        // Format: A|X|M,<orderId>,<side>,<qty>,<price>
+        // orderId
+        while (p < end && std::isdigit(*p))
+        {
+            _orderId = _orderId * 10 + (*p - '0');
+            ++p;
+        }
+        skipComma();
 
-    return;
+        // side
+        _side = (*p == 'B' ? Side::BUY : Side::SELL);
+        ++p;
+        skipComma();
+
+        // qty
+        while (p < end && std::isdigit(*p))
+        {
+            _qty = _qty * 10 + (*p - '0');
+            ++p;
+        }
+        skipComma();
+
+        // price
+        while (p < end && std::isdigit(*p))
+        {
+            _price = _price * 10 + (*p - '0');
+            ++p;
+        }
+    }
 }
