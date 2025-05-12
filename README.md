@@ -138,7 +138,7 @@ g++ -std=c++14 -isystem /usr/include/gtest -pthread \
 ./order_book_tests
 ```
 
-### Covers:
+Covers:
 
 - Order parsing for all action types
 - OrderBook operations (add, modify, cancel)
