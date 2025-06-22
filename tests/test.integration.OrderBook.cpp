@@ -3,10 +3,14 @@
 #include <fstream>
 #include <memory>
 
-#include "../../utils/Order.h"
-#include "../../src/OrderBook.h"
-#include "../../src/FeedHandler.h"
-#include "../../src/Reporter.h"
+#include "Order.h"
+#include "OrderBook.h"
+#include "FeedHandler.h"
+#include "Reporter.h"
+
+#ifndef PROJECT_SOURCE_DIR
+#define PROJECT_SOURCE_DIR "."
+#endif
 
 using namespace common;
 
@@ -16,9 +20,10 @@ TEST(OrderBookIntegrationTest, EndToEndRobust)
     FeedHandler feed(bookPtr);
     Reporter reporter(bookPtr);
 
+    std::string filePath = std::string(PROJECT_SOURCE_DIR) + "/tests/test1.txt";
     std::ifstream infile;
-    infile.open("../tests/test1.txt");
-    ASSERT_TRUE(infile.is_open()) << "Cannot open ../tests/test1.txt";
+    infile.open(filePath);
+    ASSERT_TRUE(infile.is_open()) << "Cannot open tests/test1.txt";
 
     std::string line;
     std::vector<std::string> midquotes;

@@ -1,0 +1,41 @@
+Running main() from /Users/mark/Cpp14-Order-Book/build/_deps/googletest-src/googletest/src/gtest_main.cc
+[==========] Running 5 tests from 5 test suites.
+[----------] Global test environment set-up.
+[----------] 1 test from OrderParseTest
+[ RUN      ] OrderParseTest.BasicFields
+[       OK ] OrderParseTest.BasicFields (0 ms)
+[----------] 1 test from OrderParseTest (0 ms total)
+
+[----------] 1 test from OrderBookMidQuoteTest
+[ RUN      ] OrderBookMidQuoteTest.ExampleSequence
+Did not find order 0
+Did not find order 0
+Did not find order 0
+Did not find order 0
+Did not find order 0
+Did not find order 0
+[       OK ] OrderBookMidQuoteTest.ExampleSequence (0 ms)
+[----------] 1 test from OrderBookMidQuoteTest (0 ms total)
+
+[----------] 1 test from OrderBookStateTest
+[ RUN      ] OrderBookStateTest.AddModifyCancel
+[       OK ] OrderBookStateTest.AddModifyCancel (0 ms)
+[----------] 1 test from OrderBookStateTest (0 ms total)
+
+[----------] 1 test from OrderBookTradeTest
+[ RUN      ] OrderBookTradeTest.CumulativeQuantity
+[       OK ] OrderBookTradeTest.CumulativeQuantity (0 ms)
+[----------] 1 test from OrderBookTradeTest (0 ms total)
+
+[----------] 1 test from OrderBookErrorTest
+[ RUN      ] OrderBookErrorTest.CorruptedAndDuplicate
+Duplicate order 1
+Duplicate order 1
+Did not find order 2
+1@50
+[       OK ] OrderBookErrorTest.CorruptedAndDuplicate (0 ms)
+[----------] 1 test from OrderBookErrorTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 5 tests from 5 test suites ran. (0 ms total)
+[  PASSED  ] 5 tests.

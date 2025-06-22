@@ -1,0 +1,28 @@
+Running main() from /Users/mark/Cpp14-Order-Book/build/_deps/googletest-src/googletest/src/gtest_main.cc
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from OrderBookIntegrationTest
+[ RUN      ] OrderBookIntegrationTest.EndToEndRobust
+2@1025
+3@1025
+5@1025
+6@1025
+Did not find order 100008
+Did not find order 100005
+17@1000
+20@1000
+25@1000
+45@1000
+50@1000
+Did not find order 100010
+Did not find order 100008
+Did not find order 100009
+54@1000
+55@1000
+65@1000
+[       OK ] OrderBookIntegrationTest.EndToEndRobust (0 ms)
+[----------] 1 test from OrderBookIntegrationTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.

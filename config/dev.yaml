@@ -8,4 +8,4 @@ EXTRA_OPTIONS:
 SOURCE_PATTERNS:
   - src/*.cpp
   - utils/*.cpp
-TARGET_NAME: myapp
+TARGET_NAME: orderbook

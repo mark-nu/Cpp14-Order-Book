@@ -2,10 +2,10 @@
 #include <sstream>
 #include <memory>
 
-#include "../../utils/Order.h"
-#include "../../src/OrderBook.h"
-#include "../../src/FeedHandler.h"
-#include "../../src/Reporter.h"
+#include "Order.h"
+#include "OrderBook.h"
+#include "FeedHandler.h"
+#include "Reporter.h"
 
 using namespace common;
 

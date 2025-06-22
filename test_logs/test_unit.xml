@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="5" failures="0" disabled="0" errors="0" time="0." timestamp="2025-06-22T17:16:01.510" name="AllTests">
+  <testsuite name="OrderParseTest" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2025-06-22T17:16:01.510">
+    <testcase name="BasicFields" file="/Users/mark/Cpp14-Order-Book/tests/test.unit.OrderBook.cpp" line="31" status="run" result="completed" time="0." timestamp="2025-06-22T17:16:01.510" classname="OrderParseTest" />
+  </testsuite>
+  <testsuite name="OrderBookMidQuoteTest" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2025-06-22T17:16:01.510">
+    <testcase name="ExampleSequence" file="/Users/mark/Cpp14-Order-Book/tests/test.unit.OrderBook.cpp" line="62" status="run" result="completed" time="0." timestamp="2025-06-22T17:16:01.510" classname="OrderBookMidQuoteTest" />
+  </testsuite>
+  <testsuite name="OrderBookStateTest" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2025-06-22T17:16:01.510">
+    <testcase name="AddModifyCancel" file="/Users/mark/Cpp14-Order-Book/tests/test.unit.OrderBook.cpp" line="101" status="run" result="completed" time="0." timestamp="2025-06-22T17:16:01.510" classname="OrderBookStateTest" />
+  </testsuite>
+  <testsuite name="OrderBookTradeTest" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2025-06-22T17:16:01.510">
+    <testcase name="CumulativeQuantity" file="/Users/mark/Cpp14-Order-Book/tests/test.unit.OrderBook.cpp" line="140" status="run" result="completed" time="0." timestamp="2025-06-22T17:16:01.510" classname="OrderBookTradeTest" />
+  </testsuite>
+  <testsuite name="OrderBookErrorTest" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2025-06-22T17:16:01.511">
+    <testcase name="CorruptedAndDuplicate" file="/Users/mark/Cpp14-Order-Book/tests/test.unit.OrderBook.cpp" line="170" status="run" result="completed" time="0." timestamp="2025-06-22T17:16:01.511" classname="OrderBookErrorTest" />
+  </testsuite>
+</testsuites>

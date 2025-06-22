@@ -40,8 +40,8 @@ def get_cmake_flags(config_path):
         if not source_files:
             print("⚠️ No source files matched. Check your patterns.")
             sys.exit(1)
-        source_list = " ".join(shlex.quote(file) for file in source_files)
-        cmake_args.append(f"-DSOURCE_LIST={source_list}")
+        source_list = " ".join(source_files)
+        cmake_args.append(f"-DSOURCE_LIST={shlex.quote(source_list)}")
 
     return cmake_args
 
