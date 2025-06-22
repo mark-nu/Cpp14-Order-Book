@@ -39,3 +39,8 @@
 
 # MacOS
 .DS_Store
+
+# Python
+.sconsign.dblite
+.venv
+__pycache__

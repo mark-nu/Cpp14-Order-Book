@@ -1,0 +1,11 @@
+CXX_STANDARD: 14
+OPT_FLAGS: -O2
+SAN_FLAGS: -fsanitize=address
+DEBUG_FLAGS: -g
+EXTRA_OPTIONS:
+  - -fcolor-diagnostics
+  - -fansi-escape-codes
+SOURCE_PATTERNS:
+  - src/*.cpp
+  - utils/*.cpp
+TARGET_NAME: myapp
