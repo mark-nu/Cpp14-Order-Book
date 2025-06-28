@@ -2,12 +2,9 @@ pipeline {
   agent any
 
   environment {
+    PATH = "/opt/homebrew/bin:/usr/local/bin:${env.PATH}"
     VENV = "${WORKSPACE}/.venv"
     PYTHON = "${VENV}/bin/python3"
-  }
-
-  tools {
-    cmake 'CMake'
   }
 
   stages {
