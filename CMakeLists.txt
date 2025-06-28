@@ -8,7 +8,6 @@ else()
   set(CMAKE_CXX_STANDARD 14)
 endif()
 
-# (Optional) combine any extra flags you need
 set(CMAKE_CXX_FLAGS
     "${CMAKE_CXX_FLAGS} ${OPT_FLAGS} ${DEBUG_FLAGS} ${SAN_FLAGS} ${EXTRA_OPTIONS}"
 )
