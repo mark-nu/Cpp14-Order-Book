@@ -28,7 +28,7 @@ pipeline {
       steps {
         sh '''
           . ${VENV}/bin/activate
-          python3 scripts/build.py            # runs CMake configure & build
+          python3 -m scripts.build            # runs CMake configure & build
         '''
       }
     }
@@ -37,7 +37,7 @@ pipeline {
       steps {
         sh '''
           . ${VENV}/bin/activate
-          python3 scripts/run_tests.py        # generates JUnit XML + logs
+          python3 -m scripts.run_tests        # generates JUnit XML + logs
         '''
       }
     }
